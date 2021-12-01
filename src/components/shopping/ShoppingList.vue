@@ -1,33 +1,39 @@
 <template>
   <div class="shopping-list">
-    <div class="shopping-list__items">
+    <div class="shopping-list__items" v-if="formattedListOfItems.length">
       <shopping-item
         v-for="item in formattedListOfItems"
         :key="item.name"
         :item="item"
         :should-deselect-item="itemsAddedToCart"
         @on-item-selected="onItemSelected"
+        data-testid="shopping-item"
       />
+    </div>
+    <div v-else>
+      <loading-spinner/>
     </div>
 
     <div class="shopping-list__button-container">
-      <l-button @click="addToCart"> Add {{ selectedItems.length }} items to Cart </l-button>
-      <l-button @click="goToCart"> {{ cartText }} </l-button>
+      <v-button @click="addToCart" data-testid="add-to-cart"> Add {{ selectedItems.length }} items to Cart </v-button>
+      <v-button @click="goToCart"> {{ cartText }} </v-button>
     </div>
   </div>
 </template>
 
 <script>
-import PokemonApi from '../../api/PokemonApi';
-import LButton from '@/components/ui/components/LButton';
-import ShoppingItem from  '@/components/shopping/ShoppingItem';
+import { PokemonApi } from '@/api/PokemonApi';
+import VButton from '@/components/ui/components/VButton';
+import ShoppingItem from '@/components/shopping/ShoppingItem';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 export default {
   name: 'ShoppingList',
 
   components: {
     ShoppingItem,
-    LButton
+    VButton,
+    LoadingSpinner
   },
 
   data() {
@@ -53,8 +59,8 @@ export default {
       // after retrieving all of our pokemon, we can go ahead and fetch their respective images
       await this.getItemImages()
     } catch (e) {
-      this.handleError(e)
-      throw e
+      // If given more time, would install Sentry and log the error:
+      // this.$sentry.captureException(e)
     }
   },
 
@@ -83,7 +89,7 @@ export default {
           this.listOfItemImages.push(data?.sprites?.front_shiny)
         }
       } catch (e) {
-        this.handleError(e)
+        // this.$sentry.captureException(e)
       }
     },
 
@@ -99,18 +105,14 @@ export default {
 
     addToCart() {
       this.itemsAddedToCart = true
-      // if we see an duplicate item in the cart, simply increase the qty.
-      // maybe this.cart should be an array of objects with 4 properties: name, url, img, qty
-      const addToCartAndUpdateQuantity = (acc, { name, url, imageUrl }) => {
-        acc[name] = { name, url, imageUrl, quantity: (acc[name] ? acc[name].quantity : 0) + 1 }
+      // if we see an duplicate item in the cart, merge the object and increase the quantity.
+      const addToCartAndUpdateQuantity = (cartItem, { name, url, imageUrl }) => {
+        cartItem[name] = { name, url, imageUrl, quantity: (cartItem[name] ? cartItem[name].quantity : 0) + 1 }
 
-        return acc
+        return cartItem
       };
 
-      // we only allow adding 1 qty at a time
       this.cart = Object.values([...this.cart, ...this.selectedItems].reduce(addToCartAndUpdateQuantity, {}));
-
-      console.log('cart', this.cart)
 
       this.selectedItems = []
       localStorage.setItem('cart', JSON.stringify(this.cart))
@@ -119,12 +121,6 @@ export default {
     goToCart() {
       // another option is to store the selected items in a vuex store
       this.$router.push({ name: 'Cart', params: { cart: this.cart } })
-    },
-
-    handleError(e) {
-      // If given more time, would install Sentry and log the error:
-      // this.$sentry.captureException(e)
-      console.warn(e)
     }
   }
 }

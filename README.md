@@ -15,6 +15,14 @@ npm run serve
 npm run build
 ```
 
+### Run Tests
+```
+npm run test:unit
+```
+
+### NOTE
+- Added more comments than necessary, because I wanted to explain some of the design decisions within the code and not just in the README
+
 ### What I would do given more time / Next steps
 - Add vuex store to persist / pass data better
 - I'd look into adding better loading spinner / loading handlers incase of slow network speeds (especially when fetching all of the pokemon images on load)
@@ -31,6 +39,7 @@ email them with a magic link to go back to their cart with the items loaded.
 a local 'currentStep' variable to handle which component we rendered (shopping list vs cart vs checkout).
 
 something like:
+```
 <App>
   <template>
     <component :is="currentStep" @event-handler="methodToUpdateParentDataSelectedItems">
@@ -44,5 +53,5 @@ something like:
     }
   }
 </App>
-
+```
 I chose to go with the router simply because in a real e-commerce app, there would be many routes and the above mentioned architecture would not suffice.

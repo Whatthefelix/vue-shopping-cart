@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import ShoppingList from '@/components/shopping/ShoppingList.vue'
+import ShoppingList from '@/components/shopping/ShoppingList'
 
 export default {
   name: 'Home',

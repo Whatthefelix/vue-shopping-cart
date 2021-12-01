@@ -4,6 +4,7 @@
     @mouseover="showCheckbox = true"
     @mouseleave="showCheckbox = false"
     @click="onItemSelect(item)"
+    data-testid="shopping-item"
   >
     <div v-show="shouldShowCheckbox" class="shopping-item__checkbox">
       <input type="checkbox" v-model="isSelected"/>

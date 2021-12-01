@@ -15,17 +15,18 @@
     <loading-spinner v-if="isLoading"/>
 
     <div class="cart__button-container">
-      <l-button v-if="itemsToRemove.length" @click="removeItemsFromCart"> Remove {{ itemsToRemove.length }} items from Cart </l-button>
-      <l-button @click="checkout"> Checkout </l-button>
+      <v-button @click="goBack"> Continue Shopping </v-button>
+      <v-button v-if="itemsToRemove.length" @click="removeItemsFromCart"> {{ removeCartText }} </v-button>
+      <v-button @click="checkout"> Checkout </v-button>
     </div>
   </div>
 </template>
 
 <script>
-import CheckoutApi from '../api/CheckoutApi';
+import { CheckoutApi } from '@/api/CheckoutApi';
 
 // Components
-import LButton from '@/components/ui/components/LButton';
+import VButton from '@/components/ui/components/VButton';
 import ShoppingItem from '@/components/shopping/ShoppingItem';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
@@ -33,7 +34,7 @@ export default {
   components: {
     ShoppingItem,
     LoadingSpinner,
-    LButton
+    VButton
   },
 
   data() {
@@ -47,6 +48,13 @@ export default {
   mounted() {
     if (localStorage.getItem('cart')) {
       this.cartItems = JSON.parse(localStorage.getItem('cart'))
+    }
+  },
+
+  computed: {
+    removeCartText() {
+      const length = this.itemsToRemove.length
+      return `Remove ${length} ${length > 1 ? 'items' : 'item' } from Cart`
     }
   },
 
@@ -66,6 +74,10 @@ export default {
       this.itemsToRemove = []
       // also update localStorage with our updated cart
       localStorage.setItem('cart', JSON.stringify(this.cartItems))
+    },
+
+    goBack() {
+      this.$router.go(-1)
     },
 
     async checkout() {
@@ -101,10 +113,10 @@ export default {
 
   &__button-container {
     display: flex;
-    width: 500px;
+    width: 560px;
     justify-content: space-evenly;
     margin: auto;
+    margin-top: 15px;
   }
 }
-
 </style>

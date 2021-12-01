@@ -1,5 +1,5 @@
 <template>
-  <div class="l-button" @click="$emit('click')">
+  <div class="v-button" @click="$emit('click')">
     <span>
       <slot></slot>
     </span>
@@ -9,12 +9,12 @@
 
 <script>
 export default {
-  name: 'l-button'
+  name: 'v-button'
 }
 </script>
 
 <style lang="scss" scoped>
-.l-button {
+.v-button {
   display: flex;
   justify-content: center;
   align-items: center;
